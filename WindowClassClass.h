@@ -17,6 +17,8 @@
 #define WINDOW_CLASS_CLASS_DEFAULT_CB_CLS_EXTRA									0
 #define WINDOW_CLASS_CLASS_DEFAULT_CB_WND_EXTRA									0
 
+#define WINDOW_CLASS_CLASS_UNABLE_TO_REGISTER_WINDOW_CLASS_ERROR_MESSAGE		"Unable to Register Window Class"
+
 class WindowClass
 {
 public:
