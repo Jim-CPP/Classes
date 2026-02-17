@@ -1,0 +1,39 @@
+// WindowClassClass.h
+
+#pragma once
+
+#include <windows.h>
+
+#include "..\Common\Ascii.h"
+#include "..\Common\Common.h"
+
+#define WINDOW_CLASS_CLASS_DEFAULT_STYLE										0
+#define WINDOW_CLASS_CLASS_DEFAULT_ICON_NAME									IDI_APPLICATION
+#define WINDOW_CLASS_CLASS_DEFAULT_ICON											LoadIcon( NULL, WINDOW_CLASS_CLASS_DEFAULT_ICON_NAME )
+#define WINDOW_CLASS_CLASS_DEFAULT_CURSOR										LoadCursor( NULL, IDC_ARROW )
+#define WINDOW_CLASS_CLASS_DEFAULT_BACKGROUND									( HBRUSH )( COLOR_APPWORKSPACE + 1 )
+#define WINDOW_CLASS_CLASS_DEFAULT_MENU_NAME									NULL
+#define WINDOW_CLASS_CLASS_DEFAULT_ICON_SMALL									LoadIcon( NULL, WINDOW_CLASS_CLASS_DEFAULT_ICON_NAME )
+#define WINDOW_CLASS_CLASS_DEFAULT_CB_CLS_EXTRA									0
+#define WINDOW_CLASS_CLASS_DEFAULT_CB_WND_EXTRA									0
+
+#define WINDOW_CLASS_CLASS_UNABLE_TO_REGISTER_WINDOW_CLASS_ERROR_MESSAGE		"Unable to Register Window Class"
+
+class WindowClass
+{
+public:
+	WindowClass();
+	~WindowClass();
+
+	WindowClass& operator = ( WNDCLASSEX wc );
+
+	operator WNDCLASSEX();
+
+	void Init( LPCSTR lpszClassName, WNDPROC lpfnWndProc, HINSTANCE hInstance, LPCSTR lpszMenuName = WINDOW_CLASS_CLASS_DEFAULT_MENU_NAME, HBRUSH hbrBackground = WINDOW_CLASS_CLASS_DEFAULT_BACKGROUND, UINT uStyle = WINDOW_CLASS_CLASS_DEFAULT_STYLE, HICON hIcon = WINDOW_CLASS_CLASS_DEFAULT_ICON, HCURSOR hCursor = WINDOW_CLASS_CLASS_DEFAULT_CURSOR, HICON hIconSmall = WINDOW_CLASS_CLASS_DEFAULT_ICON_SMALL, int nCbClsExtra = WINDOW_CLASS_CLASS_DEFAULT_CB_CLS_EXTRA, int nCbWndExtra = WINDOW_CLASS_CLASS_DEFAULT_CB_WND_EXTRA );
+
+	ATOM Register();
+
+protected:
+	WNDCLASSEX m_wc;
+
+}; // End of class WindowClass
