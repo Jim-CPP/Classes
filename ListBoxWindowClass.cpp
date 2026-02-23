@@ -51,10 +51,10 @@ LRESULT ListBoxWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARA
 			LPTSTR lpszSelected = new char[ STRING_LENGTH ];
 
 			// Get selected item
-			nSelectedItem = SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
+			nSelectedItem = ::SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
 
 			// Get selected item text
-			if( SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
+			if( ::SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
 			{
 				// Successfully got selected item text
 
@@ -79,10 +79,10 @@ LRESULT ListBoxWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARA
 			LPTSTR lpszSelected = new char[ STRING_LENGTH ];
 
 			// Get selected item
-			nSelectedItem = SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
+			nSelectedItem = ::SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
 
 			// Get selected item text
-			if( SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
+			if( ::SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
 			{
 				// Successfully got selected item text
 
