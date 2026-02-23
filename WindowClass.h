@@ -38,6 +38,10 @@ public:
 
 	HMENU GetSystemMenu( WINBOOL bRevert );
 
+	int GetText( LPTSTR lpszText, int nMaxCount );
+
+	int GetTextLength();
+
 	BOOL GetWindowRect( LPRECT lpRect );
 
 	BOOL Move( int nX, int nY, int nWidth, int nHeight, BOOL bRepaint = TRUE );
@@ -45,6 +49,8 @@ public:
 	HWND SetFocus();
 
 	void SetFont( HFONT hFont, BOOL bRedraw = TRUE );
+
+	BOOL SetText( LPCTSTR lpszText );
 
 	BOOL Show( int nCmdShow );
 

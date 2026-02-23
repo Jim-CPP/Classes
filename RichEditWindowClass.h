@@ -36,6 +36,8 @@ public:
 
 	LRESULT HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) );
 
+	void Select( int nStart = 0, int nEnd = -1 );
+
 	BOOL SetTextMode( int nTextMode );
 
 protected:

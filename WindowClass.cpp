@@ -102,6 +102,20 @@ HMENU Window::GetSystemMenu( WINBOOL bRevert )
 
 } // End of function Window::GetSystemMenu
 
+int Window::GetText( LPTSTR lpszText, int nMaxCount )
+{
+	// Get text
+	return SendMessage( m_hWnd, WM_GETTEXT, ( WPARAM )nMaxCount, ( LPARAM )lpszText );
+
+} // End of function Window::GetText
+
+int Window::GetTextLength()
+{
+	// Get text length
+	return SendMessage( m_hWnd, WM_GETTEXTLENGTH, ( WPARAM )NULL, ( LPARAM )NULL );
+
+} // End of function Window::GetTextLength
+
 BOOL Window::GetWindowRect( LPRECT lpRect )
 {
 	// Get window rect
@@ -130,6 +144,13 @@ void Window::SetFont( HFONT hFont, BOOL bRedraw )
 	SendMessage( m_hWnd, WM_SETFONT, ( WPARAM )hFont, ( LPARAM )bRedraw );
 
 } // End of function Window::SetFont
+
+BOOL Window::SetText( LPCTSTR lpszText )
+{
+	// Set text
+	return SendMessage( m_hWnd, WM_SETTEXT, ( WPARAM )NULL, ( LPARAM )lpszText );
+
+} // End of function Window::SetText
 
 BOOL Window::Show( int nCmdShow )
 {

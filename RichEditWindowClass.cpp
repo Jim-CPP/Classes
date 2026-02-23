@@ -119,6 +119,13 @@ LRESULT RichEditWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPAR
 
 } // End of function RichEditWindow::HandleCommandMessage
 
+void RichEditWindow::Select( int nStart, int nEnd )
+{
+	// Select text
+	SendMessage( m_hWnd, EM_SETSEL, ( WPARAM )nStart, ( LPARAM )nEnd );
+
+} // End of function RichEditWindow::Select
+
 BOOL RichEditWindow::SetTextMode( int nTextMode )
 {
 	BOOL bResult = FALSE;
