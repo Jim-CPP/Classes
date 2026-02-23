@@ -10,6 +10,16 @@ RichEditWindow::~RichEditWindow()
 {
 } // End of function RichEditWindow::~RichEditWindow
 
+BOOL RichEditWindow::Copy()
+{
+	BOOL bResult = FALSE;
+
+	MessageBox( NULL, "RichEditWindow::Copy", "ToDo", MB_OK );
+
+	return bResult;
+
+} // End of function RichEditWindow::Copy
+
 BOOL RichEditWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, HMENU hMenu, LPVOID lpParam )
 {
 	BOOL bResult = FALSE;
@@ -38,6 +48,23 @@ BOOL RichEditWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszW
 
 } // End of function RichEditWindow::Create
 
+BOOL RichEditWindow::Cut()
+{
+	BOOL bResult = FALSE;
+
+	MessageBox( NULL, "RichEditWindow::Cut", "ToDo", MB_OK );
+
+	return bResult;
+
+} // End of function RichEditWindow::Cut
+
+void RichEditWindow::Delete( BOOL bCanUndo )
+{
+	// Delete
+	::SendMessage( m_hWnd, EM_REPLACESEL, ( WPARAM )bCanUndo, ( LPARAM )NULL );
+
+} // End of function RichEditWindow::Delete
+
 LRESULT RichEditWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) )
 {
 	LRESULT lr = 0;
@@ -54,10 +81,10 @@ LRESULT RichEditWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPAR
 			LPTSTR lpszSelected = new char[ STRING_LENGTH ];
 
 			// Get selected item
-			nSelectedItem = SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
+			nSelectedItem = ::SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
 
 			// Get selected item text
-			if( SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
+			if( ::SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
 			{
 				// Successfully got selected item text
 
@@ -82,10 +109,10 @@ LRESULT RichEditWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPAR
 			LPTSTR lpszSelected = new char[ STRING_LENGTH ];
 
 			// Get selected item
-			nSelectedItem = SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
+			nSelectedItem = ::SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
 
 			// Get selected item text
-			if( SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
+			if( ::SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
 			{
 				// Successfully got selected item text
 
@@ -119,10 +146,20 @@ LRESULT RichEditWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPAR
 
 } // End of function RichEditWindow::HandleCommandMessage
 
+BOOL RichEditWindow::Paste()
+{
+	BOOL bResult = FALSE;
+
+	MessageBox( NULL, "RichEditWindow::Paste", "ToDo", MB_OK );
+
+	return bResult;
+
+} // End of function RichEditWindow::Paste
+
 void RichEditWindow::Select( int nStart, int nEnd )
 {
 	// Select text
-	SendMessage( m_hWnd, EM_SETSEL, ( WPARAM )nStart, ( LPARAM )nEnd );
+	::SendMessage( m_hWnd, EM_SETSEL, ( WPARAM )nStart, ( LPARAM )nEnd );
 
 } // End of function RichEditWindow::Select
 
@@ -131,7 +168,7 @@ BOOL RichEditWindow::SetTextMode( int nTextMode )
 	BOOL bResult = FALSE;
 
 	// Set text mode
-	if( SendMessage( m_hWnd, EM_SETTEXTMODE, ( WPARAM )nTextMode, ( LPARAM )NULL ) == 0 )
+	if( ::SendMessage( m_hWnd, EM_SETTEXTMODE, ( WPARAM )nTextMode, ( LPARAM )NULL ) == 0 )
 	{
 		// Successfully set text mode
 
@@ -143,6 +180,20 @@ BOOL RichEditWindow::SetTextMode( int nTextMode )
 	return bResult;
 
 } // End of function RichEditWindow::SetTextMode
+
+BOOL RichEditWindow::Redo()
+{
+	// Redo
+	return ::SendMessage( m_hWnd, EM_REDO, ( WPARAM )NULL, ( LPARAM )NULL );
+
+} // End of function RichEditWindow::Redo
+
+BOOL RichEditWindow::Undo()
+{
+	// Undo
+	return ::SendMessage( m_hWnd, EM_UNDO, ( WPARAM )NULL, ( LPARAM )NULL );
+
+} // End of function RichEditWindow::Undo
 
 /*
 RichEditWindow::

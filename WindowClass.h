@@ -46,6 +46,8 @@ public:
 
 	BOOL Move( int nX, int nY, int nWidth, int nHeight, BOOL bRepaint = TRUE );
 
+	LRESULT SendMessage( UINT uMessage, WPARAM wParam, LPARAM lParam );
+
 	HWND SetFocus();
 
 	void SetFont( HFONT hFont, BOOL bRedraw = TRUE );

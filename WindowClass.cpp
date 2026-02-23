@@ -105,14 +105,14 @@ HMENU Window::GetSystemMenu( WINBOOL bRevert )
 int Window::GetText( LPTSTR lpszText, int nMaxCount )
 {
 	// Get text
-	return SendMessage( m_hWnd, WM_GETTEXT, ( WPARAM )nMaxCount, ( LPARAM )lpszText );
+	return ::SendMessage( m_hWnd, WM_GETTEXT, ( WPARAM )nMaxCount, ( LPARAM )lpszText );
 
 } // End of function Window::GetText
 
 int Window::GetTextLength()
 {
 	// Get text length
-	return SendMessage( m_hWnd, WM_GETTEXTLENGTH, ( WPARAM )NULL, ( LPARAM )NULL );
+	return ::SendMessage( m_hWnd, WM_GETTEXTLENGTH, ( WPARAM )NULL, ( LPARAM )NULL );
 
 } // End of function Window::GetTextLength
 
@@ -131,6 +131,13 @@ BOOL Window::Move( int nX, int nY, int nWidth, int nHeight, BOOL bRepaint )
 
 } // End of function Window::
 
+LRESULT Window::SendMessage( UINT uMessage, WPARAM wParam, LPARAM lParam )
+{
+	// Send message
+	return ::SendMessage( m_hWnd, uMessage, ( WPARAM )wParam, ( LPARAM )lParam );
+
+} // End of function Window::SendMessage
+
 HWND Window::SetFocus()
 {
 	// Focus on window
@@ -141,14 +148,14 @@ HWND Window::SetFocus()
 void Window::SetFont( HFONT hFont, BOOL bRedraw )
 {
 	// Set font
-	SendMessage( m_hWnd, WM_SETFONT, ( WPARAM )hFont, ( LPARAM )bRedraw );
+	::SendMessage( m_hWnd, WM_SETFONT, ( WPARAM )hFont, ( LPARAM )bRedraw );
 
 } // End of function Window::SetFont
 
 BOOL Window::SetText( LPCTSTR lpszText )
 {
 	// Set text
-	return SendMessage( m_hWnd, WM_SETTEXT, ( WPARAM )NULL, ( LPARAM )lpszText );
+	return ::SendMessage( m_hWnd, WM_SETTEXT, ( WPARAM )NULL, ( LPARAM )lpszText );
 
 } // End of function Window::SetText
 

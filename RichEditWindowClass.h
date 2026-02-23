@@ -32,13 +32,25 @@ public:
 	RichEditWindow();
 	~RichEditWindow();
 
+	BOOL Copy();
+
 	BOOL Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, DWORD dwExStyle = RICH_EDIT_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE, DWORD dwStyle = RICH_EDIT_WINDOW_CLASS_DEFAULT_STYLE, int nLeft = RICH_EDIT_WINDOW_CLASS_DEFAULT_LEFT, int nTop = RICH_EDIT_WINDOW_CLASS_DEFAULT_TOP, int nWidth = RICH_EDIT_WINDOW_CLASS_DEFAULT_WIDTH, int nHeight = RICH_EDIT_WINDOW_CLASS_DEFAULT_HEIGHT, HMENU hMenu = RICH_EDIT_WINDOW_CLASS_DEFAULT_MENU, LPVOID lpParam = RICH_EDIT_WINDOW_CLASS_DEFAULT_LP_PARAM );
 
+	BOOL Cut();
+
+	void Delete( BOOL bCanUndo = TRUE );
+
 	LRESULT HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) );
+
+	BOOL Paste();
 
 	void Select( int nStart = 0, int nEnd = -1 );
 
 	BOOL SetTextMode( int nTextMode );
+
+	BOOL Redo();
+
+	BOOL Undo();
 
 protected:
 	HMODULE m_hModuleRichEditLibrary;
