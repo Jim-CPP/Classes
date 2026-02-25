@@ -14,7 +14,60 @@ BOOL RichEditWindow::Copy()
 {
 	BOOL bResult = FALSE;
 
-	MessageBox( NULL, "RichEditWindow::Copy", "ToDo", MB_OK );
+	DWORD dwStart;
+	DWORD dwEnd;
+
+	// Get selection
+	::SendMessage( m_hWnd, EM_GETSEL, ( WPARAM )&dwStart, ( LPARAM )&dwEnd );
+
+	// Ensure that some text is selected
+	if( dwEnd > dwStart )
+	{
+		// Some text is selected
+		DWORD dwBufferLength;
+
+		// Calculate buffer length
+		dwBufferLength = ( ( dwEnd - dwStart ) + sizeof( char ) );
+
+		// Allocate string memory
+		LPTSTR lpszSelectedText = new char[ dwBufferLength ];
+
+		// Get selected text
+		if( ::SendMessage( m_hWnd, EM_GETSELTEXT, ( WPARAM )NULL, ( LPARAM )lpszSelectedText ) )
+		{
+			// Successfully got selected text
+			Clipboard clipboard;
+
+			// Open clipboard
+			if( clipboard.Open() )
+			{
+				// Successfully opened clipboard
+
+				// Set clipboard text
+				bResult = clipboard.SetText( lpszSelectedText );
+
+				// Update return value
+				bResult = TRUE;
+
+				// Close clipboard
+				clipboard.Close();
+
+			} // End of successfully opened clipboard
+			else
+			{
+				// Unable to open clipboard
+
+				// Display error message
+				MessageBox( NULL, CLIPBOARD_CLASS_UNABLE_TO_OPEN_CLIPBOARD_ERROR_MESSAGE, ERROR_MESSAGE_CAPTION, ( MB_OK | MB_ICONERROR ) );
+
+			} // End of unable to open clipboard
+
+		} // End of successfully got selected text
+
+		// Free string memory
+		delete [] lpszSelectedText;
+
+	} // End of some text is selected
 
 	return bResult;
 
@@ -52,7 +105,18 @@ BOOL RichEditWindow::Cut()
 {
 	BOOL bResult = FALSE;
 
-	MessageBox( NULL, "RichEditWindow::Cut", "ToDo", MB_OK );
+	// Copy text
+	if( Copy() )
+	{
+		// Successfully copied text
+
+		// Delete selected text
+		::SendMessage( m_hWnd, EM_REPLACESEL, ( WPARAM )TRUE, ( LPARAM )NULL );
+
+		// Update return value
+		bResult = TRUE;
+
+	} // End of successfully copied text
 
 	return bResult;
 
@@ -150,7 +214,55 @@ BOOL RichEditWindow::Paste()
 {
 	BOOL bResult = FALSE;
 
-	MessageBox( NULL, "RichEditWindow::Paste", "ToDo", MB_OK );
+	Clipboard clipboard;
+
+	// Open clipboard
+	if( clipboard.Open() )
+	{
+		// Successfully opened clipboard
+		DWORD dwClipboardTextLength;
+
+		// Get clipboard text length
+		dwClipboardTextLength = clipboard.GetTextLength();
+
+		// Ensure that clipboard is not empty
+		if( dwClipboardTextLength > 0 )
+		{
+			// Clipboard is not empty
+
+			// Allocate string memory
+			LPTSTR lpszClipboard = new char[ dwClipboardTextLength + sizeof( char ) ];
+
+			// Get clipboard text
+			if( clipboard.GetText( lpszClipboard ) )
+			{
+				// Successfully got clipboard text
+
+				// Replace selected text
+				::SendMessage( m_hWnd, EM_REPLACESEL, ( WPARAM )TRUE, ( LPARAM )lpszClipboard );
+
+				// Update return value
+				bResult = TRUE;
+
+			} // End of successfully got clipboard text
+
+			// Free string memory
+			delete [] lpszClipboard;
+
+		} // End of clipboard is not empty
+
+		// Close clipboard
+		clipboard.Close();
+
+	} // End of successfully opened clipboard
+	else
+	{
+		// Unable to open clipboard
+
+		// Display error message
+		MessageBox( NULL, CLIPBOARD_CLASS_UNABLE_TO_OPEN_CLIPBOARD_ERROR_MESSAGE, ERROR_MESSAGE_CAPTION, ( MB_OK | MB_ICONERROR ) );
+
+	} // End of unable to open clipboard
 
 	return bResult;
 

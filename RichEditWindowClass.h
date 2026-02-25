@@ -8,6 +8,7 @@
 #include "..\Common\Ascii.h"
 #include "..\Common\Common.h"
 
+#include "ClipboardClass.h"
 #include "WindowClass.h"
 
 #define RICH_EDIT_WINDOW_CLASS_NAME												RICHEDIT_CLASS
