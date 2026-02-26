@@ -25,6 +25,8 @@
 #define RICH_EDIT_WINDOW_CLASS_DEFAULT_PLAIN_TEXT_MODE							(  TM_PLAINTEXT | TM_MULTILEVELUNDO | TM_MULTICODEPAGE )
 #define RICH_EDIT_WINDOW_CLASS_DEFAULT_RICH_TEXT_MODE							(  TM_RICHTEXT | TM_MULTILEVELUNDO | TM_MULTICODEPAGE )
 
+#define RICH_EDIT_WINDOW_CLASS_DEFAULT_EVENT_MASK								( ENM_SELCHANGE | ENM_UPDATE )
+
 #define RICH_EDIT_WINDOW_LIBRARY_NAME											"riched20.dll"
 
 class RichEditWindow : public Window
@@ -41,11 +43,15 @@ public:
 
 	void Delete( BOOL bCanUndo = TRUE );
 
-	LRESULT HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) );
+	LRESULT HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, void( *lpUpdateFunction )( BOOL bCanUndo, BOOL bCanRedo ) );
+
+	LRESULT HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( BOOL bIsTextSelected ) );
 
 	BOOL Paste();
 
 	void Select( int nStart = 0, int nEnd = -1 );
+
+	int SetEventMask( int nNewEventMask = RICH_EDIT_WINDOW_CLASS_DEFAULT_EVENT_MASK );
 
 	BOOL SetTextMode( int nTextMode );
 

@@ -67,6 +67,32 @@ Menu::operator HMENU()
 
 } // End of function Menu::operator HMENU()
 
+BOOL Menu::EnableItem( UINT uWhichItem, BOOL bEnable )
+{
+	BOOL bResult = FALSE;
+
+	// See if item is to be enabled
+	if( bEnable )
+	{
+		// Item is to be enabled
+
+		// Enable item
+		bResult = ::EnableMenuItem( m_hMenu, uWhichItem, MF_ENABLED );
+
+	} // End of item is to be enabled
+	else
+	{
+		// Item is to be disabled
+
+		// Disable item
+		bResult = ::EnableMenuItem( m_hMenu, uWhichItem, MF_DISABLED );
+
+	} // End of item is to be disabled
+
+	return bResult;
+
+} // End of function Menu::
+
 BOOL Menu::InsertItem( UINT uPosition, LPCTSTR lpszItemText, UINT uID, UINT uFlags )
 {
 	// Insert item

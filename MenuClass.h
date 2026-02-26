@@ -29,6 +29,8 @@ public:
 
 	operator HMENU();
 
+	BOOL EnableItem( UINT uWhichItem, BOOL bEnable );
+
 	BOOL InsertItem( UINT uPosition, LPCTSTR lpszItemText, UINT uID, UINT uFlags = MENU_CLASS_DEFAULT_ITEM_FLAGS );
 
 	BOOL InsertSeparator( UINT uPosition );

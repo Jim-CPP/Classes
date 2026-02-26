@@ -129,86 +129,108 @@ void RichEditWindow::Delete( BOOL bCanUndo )
 
 } // End of function RichEditWindow::Delete
 
-LRESULT RichEditWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) )
+LRESULT RichEditWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, void( *lpUpdateFunction )( BOOL bCanUndo, BOOL bCanRedo ) )
 {
-	LRESULT lr = 0;
+	LRESULT lResult = 0;
 
-	// Select rich edit window notification code
+	// Select notification code
 	switch( HIWORD( wParam ) )
 	{
-		case LBN_DBLCLK:
+		case EN_UPDATE:
 		{
-			// A rich edit window double click notification code
-			int nSelectedItem;
+			// An edit window update message
+			BOOL bCanUndo;
+			BOOL bCanRedo;
 
-			// Allocate string memory
-			LPTSTR lpszSelected = new char[ STRING_LENGTH ];
+			// Update undo and redo values
+			bCanUndo = ::SendMessage( m_hWnd, EM_CANUNDO, ( WPARAM )NULL, ( LPARAM )NULL );
+			bCanRedo = ::SendMessage( m_hWnd, EM_CANREDO, ( WPARAM )NULL, ( LPARAM )NULL );
 
-			// Get selected item
-			nSelectedItem = ::SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
-
-			// Get selected item text
-			if( ::SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
-			{
-				// Successfully got selected item text
-
-				// Call double click function
-				( *lpDoubleClickFunction )( lpszSelected );
-
-			} // End of successfully got selected item text
-
-			// Free string memory
-			delete [] lpszSelected;
+			// Call update function
+			( *lpUpdateFunction )( bCanUndo, bCanRedo );
 
 			// Break out of switch
 			break;
 
-		} // End of a rich edit window double click notification code
-		case LBN_SELCHANGE:
-		{
-			// A rich edit window selection change notification code
-			int nSelectedItem;
-
-			// Allocate string memory
-			LPTSTR lpszSelected = new char[ STRING_LENGTH ];
-
-			// Get selected item
-			nSelectedItem = ::SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
-
-			// Get selected item text
-			if( ::SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
-			{
-				// Successfully got selected item text
-
-				// Call selection change function
-				( *lpSelectionChangeFunction )( lpszSelected );
-
-			} // End of successfully got selected item text
-
-			// Free string memory
-			delete [] lpszSelected;
-
-			// Break out of switch
-			break;
-
-		} // End of a rich edit window selection change notification code
+		} // End of an edit window update message
 		default:
 		{
-			// Default rich edit window notification code
+			// Default notification code
 
 			// Call default procedure
-			lr = DefWindowProc( hWndMain, WM_COMMAND, wParam, lParam );
+			lResult = ::DefWindowProc( hWndMain, WM_COMMAND, wParam, lParam );
 
 			// Break out of switch
 			break;
 
-		} // End of default rich edit window notification code
+		} // End of default notification code
 
-	}; // End of selection for rich edit window notification code
+	}; // End of selection for notification code
 
-	return lr;
+	return lResult;
 
 } // End of function RichEditWindow::HandleCommandMessage
+
+LRESULT RichEditWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( BOOL bIsTextSelected ) )
+{
+	LRESULT lResult = 0;
+
+	LPNMHDR lpNmhdr;
+
+	// Get notify message handler
+	lpNmhdr = ( ( LPNMHDR )lParam );
+
+	// Select notification code
+	switch( lpNmhdr->code )
+	{
+		case EN_SELCHANGE:
+		{
+			// A selection change notification code
+			DWORD dwStart;
+			DWORD dwEnd;
+
+			// Get selection
+			::SendMessage( m_hWnd, EM_GETSEL, ( WPARAM )&dwStart, ( LPARAM )&dwEnd );
+
+			// Ensure that some text is selected
+			if( dwEnd > dwStart )
+			{
+				// Some text is selected
+
+				// Call selection changed function
+				( *lpSelectionChangedFunction )( TRUE );
+
+			} // End of some text is selected
+			else
+			{
+				// No text is selected
+
+				// Call selection changed function
+				( *lpSelectionChangedFunction )( FALSE );
+
+			} // End of no text is selected
+
+			// Break out of switch
+			break;
+
+		} // End of a selection change notification code
+		default:
+		{
+			// Default notification code
+
+			// Call default procedure
+			lResult = ::DefWindowProc( hWndMain, WM_NOTIFY, wParam, lParam );
+
+			// Break out of switch
+			break;
+
+		} // End of default notification code
+
+	}; // End of selection for notification code
+
+	return lResult;
+
+} // End of function RichEditWindow::HandleNotifyMessage
 
 BOOL RichEditWindow::Paste()
 {
@@ -274,6 +296,13 @@ void RichEditWindow::Select( int nStart, int nEnd )
 	::SendMessage( m_hWnd, EM_SETSEL, ( WPARAM )nStart, ( LPARAM )nEnd );
 
 } // End of function RichEditWindow::Select
+
+int RichEditWindow::SetEventMask( int nNewEventMask )
+{
+	// Set event mask
+	return ::SendMessage( m_hWnd, EM_SETEVENTMASK, ( WPARAM )NULL, ( LPARAM )nNewEventMask );
+
+} // End of function RichEditWindow::SetEventMask
 
 BOOL RichEditWindow::SetTextMode( int nTextMode )
 {
