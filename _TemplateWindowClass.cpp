@@ -44,10 +44,10 @@ LRESULT TemplateWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPAR
 			LPTSTR lpszSelected = new char[ STRING_LENGTH ];
 
 			// Get selected item
-			nSelectedItem = SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
+			nSelectedItem = ::SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
 
 			// Get selected item text
-			if( SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
+			if( ::SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
 			{
 				// Successfully got selected item text
 
@@ -72,10 +72,10 @@ LRESULT TemplateWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPAR
 			LPTSTR lpszSelected = new char[ STRING_LENGTH ];
 
 			// Get selected item
-			nSelectedItem = SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
+			nSelectedItem = ::SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
 
 			// Get selected item text
-			if( SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
+			if( ::SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
 			{
 				// Successfully got selected item text
 
