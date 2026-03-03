@@ -4,6 +4,9 @@
 
 ToolBarWindow::ToolBarWindow()
 {
+	// Initialise next button id
+	m_nNextItemID = 0;
+
 } // End of function ToolBarWindow::ToolBarWindow
 
 ToolBarWindow::~ToolBarWindow()
@@ -14,27 +17,45 @@ int ToolBarWindow::AddButton( int nBitmap, int nCommand )
 {
 	int nResult;
 
-	static int s_nNextButtonID = 0;
-
 	// Clear tool-bar button structure
-	ZeroMemory( &( m_tbButtons[ s_nNextButtonID ] ), sizeof( TBBUTTON ) );
+	ZeroMemory( &( m_tbButtons[ m_nNextItemID ] ), sizeof( TBBUTTON ) );
 
 	// Initialise tool-bar button structure
-	m_tbButtons[ s_nNextButtonID ].iBitmap		= nBitmap;
-	m_tbButtons[ s_nNextButtonID ].idCommand	= nCommand;
-	m_tbButtons[ s_nNextButtonID ].fsState		= TBSTATE_ENABLED;
-	m_tbButtons[ s_nNextButtonID ].fsStyle		= TOOL_BAR_WINDOW_CLASS_STYLES;
-	m_tbButtons[ s_nNextButtonID ].dwData		= { 0 };
+	m_tbButtons[ m_nNextItemID ].iBitmap	= nBitmap;
+	m_tbButtons[ m_nNextItemID ].idCommand	= nCommand;
+	m_tbButtons[ m_nNextItemID ].fsState	= TBSTATE_ENABLED;
+	m_tbButtons[ m_nNextItemID ].fsStyle	= TOOL_BAR_WINDOW_CLASS_ITEM_STYLE;
+	m_tbButtons[ m_nNextItemID ].dwData		= { 0 };
 
 	// Update return value
-	nResult = s_nNextButtonID;
+	nResult = m_nNextItemID;
 
 	// Update next button id
-	s_nNextButtonID ++;
+	m_nNextItemID ++;
 
 	return nResult;
 
 } // End of function ToolBarWindow::AddButton
+
+int ToolBarWindow::AddSeparator()
+{
+	int nResult;
+
+	// Clear tool-bar button structure
+	ZeroMemory( &( m_tbButtons[ m_nNextItemID ] ), sizeof( TBBUTTON ) );
+
+	// Initialise tool-bar button structure
+	m_tbButtons[ m_nNextItemID ].fsStyle = TOOL_BAR_WINDOW_CLASS_SEPARATOR_STYLE;
+
+	// Update return value
+	nResult = m_nNextItemID;
+
+	// Update next button id
+	m_nNextItemID ++;
+
+	return nResult;
+
+} // End of function ToolBarWindow::AddSeparator
 
 BOOL ToolBarWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, HMENU hMenu, LPVOID lpParam )
 {
