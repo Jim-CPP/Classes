@@ -27,6 +27,8 @@
 
 #define RICH_EDIT_WINDOW_CLASS_DEFAULT_EVENT_MASK								( ENM_SELCHANGE | ENM_UPDATE )
 
+#define RICH_EDIT_WINDOW_CLASS_CHECK_MODIFIED_TEXT								"Text is modified.\r\n\r\nDo you want to continue?"
+
 #define RICH_EDIT_WINDOW_LIBRARY_NAME											"riched20.dll"
 
 class RichEditWindow : public Window
@@ -34,6 +36,10 @@ class RichEditWindow : public Window
 public:
 	RichEditWindow();
 	~RichEditWindow();
+
+	BOOL CheckModified( HWND hWndParent );
+
+	void ClearModifiedFlag();
 
 	BOOL Copy();
 
@@ -46,6 +52,8 @@ public:
 	LRESULT HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, void( *lpUpdateFunction )( BOOL bCanUndo, BOOL bCanRedo ) );
 
 	LRESULT HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( BOOL bIsTextSelected ) );
+
+	BOOL IsModified();
 
 	BOOL Paste();
 

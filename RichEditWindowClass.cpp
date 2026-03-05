@@ -10,6 +10,46 @@ RichEditWindow::~RichEditWindow()
 {
 } // End of function RichEditWindow::~RichEditWindow
 
+BOOL RichEditWindow::CheckModified( HWND hWndParent )
+{
+	BOOL bResult = FALSE;
+
+	// See if text is modified
+	if( ::SendMessage( m_hWnd, EM_GETMODIFY, ( WPARAM )FALSE, ( LPARAM )FALSE ) )
+	{
+		// Text is modified
+
+		// Ensure that user is ok to continue
+		if( MessageBox( hWndParent, RICH_EDIT_WINDOW_CLASS_CHECK_MODIFIED_TEXT, WARNING_MESSAGE_CAPTION, ( MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING ) ) == IDYES )
+		{
+			// User is ok to continue
+
+			// Update return value
+			bResult = TRUE;
+
+		} // End of user is ok to continue
+
+	} // End of text is modified
+	else
+	{
+		// Text is not modified
+
+		// Update return value
+		bResult = TRUE;
+
+	} // End of text is not modified
+
+	return bResult;
+
+} // End of function RichEditWindow::CheckModified
+
+void RichEditWindow::ClearModifiedFlag()
+{
+	// Clear modified flag
+	::SendMessage( m_hWnd, EM_SETMODIFY, ( WPARAM )FALSE, ( LPARAM )NULL );
+
+} // End of function RichEditWindow::ClearModifiedFlag
+
 BOOL RichEditWindow::Copy()
 {
 	BOOL bResult = FALSE;
@@ -231,6 +271,13 @@ LRESULT RichEditWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARA
 	return lResult;
 
 } // End of function RichEditWindow::HandleNotifyMessage
+
+BOOL RichEditWindow::IsModified()
+{
+	// See if rich edit window has been modified
+	return ::SendMessage( m_hWnd, EM_GETMODIFY, ( WPARAM )FALSE, ( LPARAM )FALSE );
+
+} // End of function RichEditWindow::IsModified
 
 BOOL RichEditWindow::Paste()
 {
