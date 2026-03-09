@@ -5,14 +5,14 @@
 OpenFileName::OpenFileName()
 {
 	// Initialise member variables
-	ZeroMemory( &m_ofn, sizeof( m_ofn ) );
+	::ZeroMemory( &m_ofn, sizeof( m_ofn ) );
 
 } // End of function OpenFileName::OpenFileName
 
 OpenFileName::~OpenFileName()
 {
 	// Clear member variables
-	ZeroMemory( &m_ofn, sizeof( m_ofn ) );
+	::ZeroMemory( &m_ofn, sizeof( m_ofn ) );
 
 } // End of function OpenFileName::~OpenFileName
 
@@ -36,16 +36,19 @@ BOOL OpenFileName::GetOpen( HWND hWndOwner, LPCTSTR lpszFilter, LPCTSTR lpszDefa
 	BOOL bResult = FALSE;
 
 	// Clear open file name structure
-	ZeroMemory( &m_ofn, sizeof( m_ofn ) );
+	::ZeroMemory( &m_ofn, sizeof( m_ofn ) );
 
 	// Initialise open file name structure
 	m_ofn.lStructSize	= sizeof( m_ofn );
 	m_ofn.hwndOwner		= hWndOwner;
 	m_ofn.lpstrFilter	= lpszFilter;
-	m_ofn.lpstrFile		= lpszFileName;
 	m_ofn.nMaxFile		= STRING_LENGTH;
 	m_ofn.Flags			= dwFlags;
+	m_ofn.lpstrFile		= lpszFileName;
 	m_ofn.lpstrDefExt	= lpszDefaultExtension;
+
+	// Clear file name
+	lpszFileName[ 0 ] = ( char )NULL;
 
 	// Get open file name
 	if( ::GetOpenFileName( &m_ofn ) )
@@ -66,7 +69,7 @@ BOOL OpenFileName::GetSave( HWND hWndOwner, LPCTSTR lpszFilter, LPCTSTR lpszDefa
 	BOOL bResult = FALSE;
 
 	// Clear open file name structure
-	ZeroMemory( &m_ofn, sizeof( m_ofn ) );
+	::ZeroMemory( &m_ofn, sizeof( m_ofn ) );
 
 	// Initialise open file name structure
 	m_ofn.lStructSize	= sizeof( m_ofn );
@@ -76,6 +79,9 @@ BOOL OpenFileName::GetSave( HWND hWndOwner, LPCTSTR lpszFilter, LPCTSTR lpszDefa
 	m_ofn.nMaxFile		= STRING_LENGTH;
 	m_ofn.Flags			= dwFlags;
 	m_ofn.lpstrDefExt	= lpszDefaultExtension;
+
+	// Clear file name
+	lpszFileName[ 0 ] = ( char )NULL;
 
 	// Get save file name
 	if( ::GetSaveFileName( &m_ofn ) )
