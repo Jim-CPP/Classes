@@ -20,7 +20,7 @@ BOOL RichEditWindow::CheckModified( HWND hWndParent )
 		// Text is modified
 
 		// Ensure that user is ok to continue
-		if( MessageBox( hWndParent, RICH_EDIT_WINDOW_CLASS_CHECK_MODIFIED_TEXT, WARNING_MESSAGE_CAPTION, ( MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING ) ) == IDYES )
+		if( ::MessageBox( hWndParent, RICH_EDIT_WINDOW_CLASS_CHECK_MODIFIED_TEXT, WARNING_MESSAGE_CAPTION, ( MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING ) ) == IDYES )
 		{
 			// User is ok to continue
 
@@ -93,14 +93,6 @@ BOOL RichEditWindow::Copy()
 				clipboard.Close();
 
 			} // End of successfully opened clipboard
-			else
-			{
-				// Unable to open clipboard
-
-				// Display error message
-				MessageBox( NULL, CLIPBOARD_CLASS_UNABLE_TO_OPEN_CLIPBOARD_ERROR_MESSAGE, ERROR_MESSAGE_CAPTION, ( MB_OK | MB_ICONERROR ) );
-
-			} // End of unable to open clipboard
 
 		} // End of successfully got selected text
 
@@ -324,14 +316,6 @@ BOOL RichEditWindow::Paste()
 		clipboard.Close();
 
 	} // End of successfully opened clipboard
-	else
-	{
-		// Unable to open clipboard
-
-		// Display error message
-		MessageBox( NULL, CLIPBOARD_CLASS_UNABLE_TO_OPEN_CLIPBOARD_ERROR_MESSAGE, ERROR_MESSAGE_CAPTION, ( MB_OK | MB_ICONERROR ) );
-
-	} // End of unable to open clipboard
 
 	return bResult;
 

@@ -7,6 +7,8 @@
 #include "..\Common\Ascii.h"
 #include "..\Common\Common.h"
 
+#define ARGUMENT_LIST_CLASS_FIRST_ARGUMENT_POSITION								1
+
 class ArgumentList
 {
 public:
@@ -24,6 +26,8 @@ public:
 	BOOL Get();
 
 	int GetArgumentCount();
+
+	BOOL GetFirstArgument( LPTSTR lpszFirstArgument );
 
 	int ProcessArguments( BOOL( *lpArgumentFunction )( LPCTSTR lpszArgument ) );
 

@@ -96,6 +96,39 @@ int ArgumentList::GetArgumentCount()
 
 } // End of function ArgumentList::GetArgumentCount
 
+BOOL ArgumentList::GetFirstArgument( LPTSTR lpszFirstArgument )
+{
+	BOOL bResult = FALSE;
+
+	int nSizeNeeded;
+	int nWideArgumentLength;
+
+	// Get wide first argument length
+	nWideArgumentLength = lstrlenW( m_lpszArgumentList[ ARGUMENT_LIST_CLASS_FIRST_ARGUMENT_POSITION ] );
+
+	// Get size required for first argument
+	nSizeNeeded = WideCharToMultiByte( CP_UTF8, 0, m_lpszArgumentList[ ARGUMENT_LIST_CLASS_FIRST_ARGUMENT_POSITION ], nWideArgumentLength, NULL, 0, NULL, NULL );
+
+	// Convert first argument to ansi
+	WideCharToMultiByte( CP_UTF8, 0, m_lpszArgumentList[ ARGUMENT_LIST_CLASS_FIRST_ARGUMENT_POSITION ], nWideArgumentLength, lpszFirstArgument, nSizeNeeded, NULL, NULL );
+
+	// Terminate first argument
+	lpszFirstArgument[ nSizeNeeded ] = ( char )NULL;
+
+	// Ensure that first argument is valid
+	if( lpszFirstArgument[ 0 ] )
+	{
+		// First argument is valid
+
+		// Update return value
+		bResult = TRUE;
+
+	} // End of first argument is valid
+
+	return bResult;
+
+} // End of function ArgumentList::GetFirstArgument
+
 int ArgumentList::ProcessArguments( BOOL( *lpArgumentFunction )( LPCTSTR lpszArgument ) )
 {
 	int nResult = 0;

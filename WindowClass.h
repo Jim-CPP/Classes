@@ -44,6 +44,8 @@ public:
 
 	BOOL GetWindowRect( LPRECT lpRect );
 
+	int MessageBox( LPCTSTR lpszText, LPCTSTR lpszCaption, UINT uType );
+
 	BOOL Move( int nX, int nY, int nWidth, int nHeight, BOOL bRepaint = TRUE );
 
 	LRESULT SendMessage( UINT uMessage, WPARAM wParam, LPARAM lParam );

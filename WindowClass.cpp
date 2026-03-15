@@ -123,6 +123,12 @@ BOOL Window::GetWindowRect( LPRECT lpRect )
 
 } // End of function Window::GetWindowRect
 
+int Window::MessageBox( LPCTSTR lpszText, LPCTSTR lpszCaption, UINT uType )
+{
+	// Display message box
+	return ::MessageBox( m_hWnd, lpszText, lpszCaption, uType );
+
+} // End of function Window::MessageBox
 
 BOOL Window::Move( int nX, int nY, int nWidth, int nHeight, BOOL bRepaint )
 {
