@@ -95,6 +95,13 @@ BOOL Window::GetClientRect( LPRECT lpRect )
 
 } // End of function Window::GetClientRect
 
+HDC Window::GetDC()
+{
+	// Get dc
+	return ::GetDC( m_hWnd );
+
+} // End of function Window::GetDC
+
 HMENU Window::GetSystemMenu( WINBOOL bRevert )
 {
 	// Get system menu

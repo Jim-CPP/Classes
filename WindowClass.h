@@ -36,6 +36,8 @@ public:
 
 	BOOL GetClientRect( LPRECT lpRect );
 
+	HDC GetDC();
+
 	HMENU GetSystemMenu( WINBOOL bRevert );
 
 	int GetText( LPTSTR lpszText, int nMaxCount );
