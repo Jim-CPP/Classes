@@ -14,7 +14,7 @@
 #define RICH_EDIT_WINDOW_CLASS_NAME												RICHEDIT_CLASS
 #define RICH_EDIT_WINDOW_CLASS_DEFAULT_TEXT										NULL
 #define RICH_EDIT_WINDOW_CLASS_DEFAULT_MENU										NULL
-#define RICH_EDIT_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE							0
+#define RICH_EDIT_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE							WS_EX_ACCEPTFILES
 #define RICH_EDIT_WINDOW_CLASS_DEFAULT_STYLE									( WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE )
 #define RICH_EDIT_WINDOW_CLASS_DEFAULT_LEFT										0
 #define RICH_EDIT_WINDOW_CLASS_DEFAULT_TOP										0
@@ -25,7 +25,7 @@
 #define RICH_EDIT_WINDOW_CLASS_DEFAULT_PLAIN_TEXT_MODE							(  TM_PLAINTEXT | TM_MULTILEVELUNDO | TM_MULTICODEPAGE )
 #define RICH_EDIT_WINDOW_CLASS_DEFAULT_RICH_TEXT_MODE							(  TM_RICHTEXT | TM_MULTILEVELUNDO | TM_MULTICODEPAGE )
 
-#define RICH_EDIT_WINDOW_CLASS_DEFAULT_EVENT_MASK								( ENM_SELCHANGE | ENM_UPDATE )
+#define RICH_EDIT_WINDOW_CLASS_DEFAULT_EVENT_MASK								( ENM_DROPFILES | ENM_SELCHANGE | ENM_UPDATE )
 
 #define RICH_EDIT_WINDOW_CLASS_CHECK_MODIFIED_TEXT								"Text is modified.\r\n\r\nDo you want to continue?"
 
@@ -51,7 +51,7 @@ public:
 
 	LRESULT HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, void( *lpUpdateFunction )( BOOL bCanUndo, BOOL bCanRedo ) );
 
-	LRESULT HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( BOOL bIsTextSelected ) );
+	LRESULT HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, int( *lpDropFunction )( HDROP hDrop ), void( *lpSelectionChangedFunction )( BOOL bIsTextSelected ) );
 
 	BOOL IsModified();
 
@@ -64,6 +64,8 @@ public:
 	BOOL SetTextMode( int nTextMode );
 
 	BOOL Redo();
+
+	void ReplaceSelected( LPCTSTR lpszReplacementText, BOOL bCanUndo = TRUE );
 
 	BOOL Undo();
 

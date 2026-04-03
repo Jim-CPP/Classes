@@ -203,7 +203,7 @@ LRESULT RichEditWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPAR
 
 } // End of function RichEditWindow::HandleCommandMessage
 
-LRESULT RichEditWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( BOOL bIsTextSelected ) )
+LRESULT RichEditWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, int( *lpDropFunction )( HDROP hDrop ), void( *lpSelectionChangedFunction )( BOOL bIsTextSelected ) )
 {
 	LRESULT lResult = 0;
 
@@ -215,6 +215,21 @@ LRESULT RichEditWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARA
 	// Select notification code
 	switch( lpNmhdr->code )
 	{
+		case EN_DROPFILES:
+		{
+			// An edit window drop files message
+			HDROP hDrop;
+
+			// Get drop handle
+			hDrop = ( HDROP )( ( ( ENDROPFILES * )lParam )->hDrop );
+
+			// Call drop files function
+			( *lpDropFunction )( hDrop );
+
+			// Break out of switch
+			break;
+
+		} // End of an edit window drop files message
 		case EN_SELCHANGE:
 		{
 			// A selection change notification code
@@ -359,6 +374,13 @@ BOOL RichEditWindow::Redo()
 	return ::SendMessage( m_hWnd, EM_REDO, ( WPARAM )NULL, ( LPARAM )NULL );
 
 } // End of function RichEditWindow::Redo
+
+void RichEditWindow::ReplaceSelected( LPCTSTR lpszReplacementText, BOOL bCanUndo )
+{
+	// Replace text
+	::SendMessage( m_hWnd, EM_REPLACESEL, ( WPARAM )bCanUndo, ( LPARAM )lpszReplacementText );
+
+} // End of function RichEditWindow::ReplaceSelected
 
 BOOL RichEditWindow::Undo()
 {

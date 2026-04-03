@@ -21,6 +21,10 @@ public:
 
 	operator HDROP();
 
+	int ProcessAllFiles( void( *lpAllDroppedFilesFunction )( LPCTSTR lpszAllDroppedFilePaths ) );
+
+	int ProcessFiles( BOOL( *lpDropFunction )( LPCTSTR lpszDroppedFilePath ) );
+
 	int ProcessFiles( WPARAM wParam, BOOL( *lpDropFunction )( LPCTSTR lpszDroppedFilePath ) );
 
 protected:
