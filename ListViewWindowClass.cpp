@@ -44,6 +44,33 @@ int ListViewWindow::AddColumn( LPCTSTR lpszColumnTitle, int nColumnWidth )
 
 } // End of function ListViewWindow::AddColumn
 
+int ListViewWindow::AddItem( LPCTSTR lpszItemText, DWORD dwTextMax )
+{
+	int nResult = 0;
+
+	LVITEM lvItem;
+	int nItemCount;
+
+	// Count items on list view window
+	nItemCount = ::SendMessage( m_hWnd, LVM_GETITEMCOUNT, ( WPARAM )NULL, ( LPARAM )NULL );
+
+	// Clear list view item structure
+	ZeroMemory( &lvItem, sizeof( lvItem ) );
+
+	// Initialise list view item structure
+	lvItem.mask			= LVIF_TEXT;
+	lvItem.cchTextMax	= dwTextMax;
+	lvItem.iItem		= nItemCount;
+	lvItem.iSubItem		= 0;
+	lvItem.pszText		= ( LPTSTR )lpszItemText;
+
+	// Add item to list view window
+	nResult = ::SendMessage( m_hWnd, LVM_INSERTITEM, ( WPARAM )nItemCount, ( LPARAM )&lvItem );
+
+	return nResult;
+
+} // End of function ListViewWindow::AddItem
+
 int ListViewWindow::AutoSizeAllColumns()
 {
 	int nResult = 0;
@@ -89,6 +116,29 @@ BOOL ListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszW
 	return bResult;
 
 } // End of function ListViewWindow::Create
+
+BOOL ListViewWindow::GetItemText( int nWhichItem, int nWhichSubItem, LPTSTR lpszItemText, DWORD dwTextMax )
+{
+	BOOL bResult = FALSE;
+
+	LVITEM lvItem;
+
+	// Clear list view item structure
+	ZeroMemory( &lvItem, sizeof( lvItem ) );
+
+	// Initialise list view item structure
+	lvItem.mask			= LVIF_TEXT;
+	lvItem.cchTextMax	= dwTextMax;
+	lvItem.iItem		= nWhichItem;
+	lvItem.iSubItem		= nWhichSubItem;
+	lvItem.pszText		= lpszItemText;
+
+	// Add item to list view window
+	bResult = ::SendMessage( m_hWnd, LVM_GETITEM, ( WPARAM )nWhichItem, ( LPARAM )&lvItem );
+
+	return bResult;
+
+} // End of function ListViewWindow::SetItemText
 
 LRESULT ListViewWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) )
 {
@@ -170,6 +220,29 @@ LRESULT ListViewWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPAR
 	return lr;
 
 } // End of function ListViewWindow::HandleCommandMessage
+
+BOOL ListViewWindow::SetItemText( int nWhichItem, int nWhichSubItem, LPCTSTR lpszItemText, DWORD dwTextMax )
+{
+	BOOL bResult = FALSE;
+
+	LVITEM lvItem;
+
+	// Clear list view item structure
+	ZeroMemory( &lvItem, sizeof( lvItem ) );
+
+	// Initialise list view item structure
+	lvItem.mask			= LVIF_TEXT;
+	lvItem.cchTextMax	= dwTextMax;
+	lvItem.iItem		= nWhichItem;
+	lvItem.iSubItem		= nWhichSubItem;
+	lvItem.pszText		= ( LPTSTR )lpszItemText;
+
+	// Add item to list view window
+	bResult = ::SendMessage( m_hWnd, LVM_SETITEM, ( WPARAM )nWhichItem, ( LPARAM )&lvItem );
+
+	return bResult;
+
+} // End of function ListViewWindow::SetItemText
 
 /*
 ListViewWindow::
