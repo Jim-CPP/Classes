@@ -38,7 +38,9 @@ public:
 
 	BOOL GetItemText( int nWhichItem, int nWhichSubItem, LPTSTR lpszItemText, DWORD dwTextMax = STRING_LENGTH );
 
-	LRESULT HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) );
+	LRESULT HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam );
+
+	LRESULT HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) );
 
 	BOOL SetItemText( int nWhichItem, int nWhichSubItem, LPCTSTR lpszItemText, DWORD dwTextMax = STRING_LENGTH );
 

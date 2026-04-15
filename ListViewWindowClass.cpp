@@ -140,69 +140,13 @@ BOOL ListViewWindow::GetItemText( int nWhichItem, int nWhichSubItem, LPTSTR lpsz
 
 } // End of function ListViewWindow::SetItemText
 
-LRESULT ListViewWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) )
+LRESULT ListViewWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam )
 {
 	LRESULT lr = 0;
 
 	// Select list view window notification code
 	switch( HIWORD( wParam ) )
 	{
-		case LBN_DBLCLK:
-		{
-			// A list view window double click notification code
-			int nSelectedItem;
-
-			// Allocate string memory
-			LPTSTR lpszSelected = new char[ STRING_LENGTH ];
-
-			// Get selected item
-			nSelectedItem = ::SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
-
-			// Get selected item text
-			if( ::SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
-			{
-				// Successfully got selected item text
-
-				// Call double click function
-				( *lpDoubleClickFunction )( lpszSelected );
-
-			} // End of successfully got selected item text
-
-			// Free string memory
-			delete [] lpszSelected;
-
-			// Break out of switch
-			break;
-
-		} // End of a list view window double click notification code
-		case LBN_SELCHANGE:
-		{
-			// A list view window selection change notification code
-			int nSelectedItem;
-
-			// Allocate string memory
-			LPTSTR lpszSelected = new char[ STRING_LENGTH ];
-
-			// Get selected item
-			nSelectedItem = ::SendMessage( m_hWnd, LB_GETCURSEL, ( WPARAM )NULL, ( LPARAM )NULL );
-
-			// Get selected item text
-			if( ::SendMessage( m_hWnd, LB_GETTEXT, ( WPARAM )nSelectedItem, ( LPARAM )lpszSelected ) )
-			{
-				// Successfully got selected item text
-
-				// Call selection change function
-				( *lpSelectionChangeFunction )( lpszSelected );
-
-			} // End of successfully got selected item text
-
-			// Free string memory
-			delete [] lpszSelected;
-
-			// Break out of switch
-			break;
-
-		} // End of a list view window selection change notification code
 		default:
 		{
 			// Default list view window notification code
@@ -220,6 +164,67 @@ LRESULT ListViewWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPAR
 	return lr;
 
 } // End of function ListViewWindow::HandleCommandMessage
+
+LRESULT ListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) )
+{
+	LRESULT lResult = 0;
+
+	LPNMLISTVIEW lpNmListView;
+
+	// Get list view notification message handler
+	lpNmListView = ( LPNMLISTVIEW )lParam;
+
+	// Select list view window notification code
+	switch( lpNmListView->hdr.code )
+	{
+		case LVN_ITEMCHANGED:
+		{
+			// A list view window item changed notification code
+
+			// See if selection has changed to selected
+			if( ( lpNmListView->uNewState ^ lpNmListView->uOldState ) & LVIS_SELECTED )
+			{
+				// Selection has changed to selected
+
+				// Allocate string memory
+				LPTSTR lpszItemText = new char[ STRING_LENGTH + sizeof( char ) ];
+
+				// Get item text
+				if( GetItemText( lpNmListView->iItem, lpNmListView->iSubItem, lpszItemText ) )
+				{
+					// Successfully got item text
+
+					// Call selection changed function with item
+					( *lpSelectionChangeFunction )( lpszItemText );
+
+				} // End of successfully got item text
+
+				// Free string memory
+				delete [] lpszItemText;
+
+			} // End of selection has changed to selected
+
+			// Break out of switch
+			break;
+
+		} // End of a list view window item changed notification code
+		default:
+		{
+			// Default list view window notification code
+
+			// Call default procedure
+			lResult = DefWindowProc( hWndMain, WM_COMMAND, wParam, lParam );
+
+			// Break out of switch
+			break;
+
+		} // End of default list view window notification code
+
+	}; // End of selection for list view window notification code
+
+	return lResult;
+
+} // End of function ListViewWindow::HandleNotifyMessage
 
 BOOL ListViewWindow::SetItemText( int nWhichItem, int nWhichSubItem, LPCTSTR lpszItemText, DWORD dwTextMax )
 {
