@@ -34,13 +34,15 @@ public:
 
 	int AutoSizeAllColumns();
 
+	int CALLBACK Compare( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort );
+
 	BOOL Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText = LIST_VIEW_WINDOW_CLASS_DEFAULT_TEXT, DWORD dwExStyle = LIST_VIEW_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE, DWORD dwStyle = LIST_VIEW_WINDOW_CLASS_DEFAULT_STYLE, int nLeft = LIST_VIEW_WINDOW_CLASS_DEFAULT_LEFT, int nTop = LIST_VIEW_WINDOW_CLASS_DEFAULT_TOP, int nWidth = LIST_VIEW_WINDOW_CLASS_DEFAULT_WIDTH, int nHeight = LIST_VIEW_WINDOW_CLASS_DEFAULT_HEIGHT, HMENU hMenu = LIST_VIEW_WINDOW_CLASS_DEFAULT_MENU, LPVOID lpParam = LIST_VIEW_WINDOW_CLASS_DEFAULT_LP_PARAM );
 
 	BOOL GetItemText( int nWhichItem, int nWhichSubItem, LPTSTR lpszItemText, DWORD dwTextMax = STRING_LENGTH );
 
 	LRESULT HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam );
 
-	LRESULT HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) );
+	LRESULT HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ), PFNLVCOMPARE pFnLvCompare );
 
 	BOOL SetItemText( int nWhichItem, int nWhichSubItem, LPCTSTR lpszItemText, DWORD dwTextMax = STRING_LENGTH );
 

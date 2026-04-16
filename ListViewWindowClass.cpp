@@ -96,6 +96,57 @@ int ListViewWindow::AutoSizeAllColumns()
 
 } // End of function ListViewWindow::AutoSizeAllColumns
 
+int CALLBACK ListViewWindow::Compare( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort )
+{
+	int nResult = 0;
+
+	LVITEM lvItem;
+
+	// Allocate string memory
+	LPTSTR lpszItem1 = new char[ STRING_LENGTH + sizeof( char ) ];
+	LPTSTR lpszItem2 = new char[ STRING_LENGTH + sizeof( char ) ];
+
+	// Clear list view item structure
+	ZeroMemory( &lvItem, sizeof( lvItem ) );
+
+	// Initialise list view item structure
+	lvItem.mask			= LVIF_TEXT;
+	lvItem.iSubItem		= lParamSort;
+	lvItem.cchTextMax	= STRING_LENGTH;
+
+	// Update list view item structure for first item
+	lvItem.iItem	= lParam1;
+	lvItem.pszText	= lpszItem1;
+
+	// Get first item text
+	if( ::SendMessage( m_hWnd, LVM_GETITEMTEXT, ( WPARAM )lParam1, ( LPARAM )&lvItem ) )
+	{
+		// Successfully got first item text
+
+		// Update list view item structure for second item
+		lvItem.iItem	= lParam2;
+		lvItem.pszText	= lpszItem2;
+
+		// Get second item text
+		if( ::SendMessage( m_hWnd, LVM_GETITEMTEXT, ( WPARAM )lParam2, ( LPARAM )&lvItem ) )
+		{
+			// Successfully got second item text
+
+			// Compare item texts
+			nResult = lstrcmp( lpszItem1, lpszItem2 );
+
+		} // End of successfully got second item text
+
+	} // End of successfully got first item text
+
+	// Free string memory
+	delete [] lpszItem1;
+	delete [] lpszItem2;
+
+	return nResult;
+
+} // End of function Compare
+
 BOOL ListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, HMENU hMenu, LPVOID lpParam )
 {
 	BOOL bResult = FALSE;
@@ -165,7 +216,7 @@ LRESULT ListViewWindow::HandleCommandMessage( HWND hWndMain, WPARAM wParam, LPAR
 
 } // End of function ListViewWindow::HandleCommandMessage
 
-LRESULT ListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ) )
+LRESULT ListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ), PFNLVCOMPARE pFnLvCompare )
 {
 	LRESULT lResult = 0;
 
@@ -177,6 +228,17 @@ LRESULT ListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARA
 	// Select list view window notification code
 	switch( lpNmListView->hdr.code )
 	{
+		case LVN_COLUMNCLICK:
+		{
+			// A column click notify message
+
+			// Sort the list view
+			ListView_SortItemsEx( m_hWnd, pFnLvCompare, lpNmListView->iSubItem );
+
+			// Break out of switch
+			break;
+
+		} // End of a column click notify message
 		case LVN_ITEMCHANGED:
 		{
 			// A list view window item changed notification code
