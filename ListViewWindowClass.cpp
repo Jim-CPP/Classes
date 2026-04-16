@@ -208,6 +208,30 @@ LRESULT ListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARA
 			break;
 
 		} // End of a list view window item changed notification code
+		case NM_DBLCLK:
+		{
+			// A double click notification code
+
+			// Allocate string memory
+			LPTSTR lpszItemText = new char[ STRING_LENGTH + sizeof( char ) ];
+
+			// Get item text
+			if( GetItemText( lpNmListView->iItem, lpNmListView->iSubItem, lpszItemText ) )
+			{
+				// Successfully got item text
+
+				// Call double click function with item
+				( *lpDoubleClickFunction )( lpszItemText );
+
+			} // End of successfully got item text
+
+			// Free string memory
+			delete [] lpszItemText;
+
+			// Break out of switch
+			break;
+
+		} // End of a double click notification code
 		default:
 		{
 			// Default list view window notification code
