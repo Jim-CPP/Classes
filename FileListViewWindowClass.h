@@ -44,6 +44,8 @@ public:
 
 	int Populate();
 
+	int Populate( LPCTSTR lpszParentFolderPath );
+
 protected:
 
 }; // End of class FileListViewWindow

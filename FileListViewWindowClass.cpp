@@ -138,28 +138,54 @@ int FileListViewWindow::Populate()
 {
 	int nResult = -1;
 
+	// Allocate string memory
+	LPTSTR lpszCurrentFolderPath = new char[ STRING_LENGTH + sizeof( char ) ];
+
+	// Get current folder path
+	if( GetCurrentDirectory( STRING_LENGTH, lpszCurrentFolderPath ) )
+	{
+		// Successfully got current folder path
+
+		// Populate to current folder
+		nResult = Populate( lpszCurrentFolderPath );
+
+	} // End of successfully got current folder path
+
+	// Free string memory
+	delete [] lpszCurrentFolderPath;
+
+	return nResult;
+
+} // End of function FileListViewWindow::Populate
+
+int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
+{
+	int nResult = -1;
+
 	WIN32_FIND_DATA wfd;
 	HANDLE hFindFile;
 
 	// Allocate string memory
-	LPTSTR lpszCurrentFolderPath = new char[ STRING_LENGTH + sizeof( char ) ];
+	LPTSTR lpszParentFolderPath2 = new char[ STRING_LENGTH + sizeof( char ) ];
 	LPTSTR lpszFullSearchPattern = new char[ STRING_LENGTH + sizeof( char ) ];
 
-	// Get current folder path
-	GetCurrentDirectory( STRING_LENGTH, lpszCurrentFolderPath );
+	// Copy parent folder path
+	lstrcpy( lpszParentFolderPath2, lpszParentFolderPath );
+	// Note that the parent folder path input parameter is a constant, which can't be modified
+	// Therefore a copy needs to be created
 
 	// Ensure that current folder path ends with a back-slash
-	if( lpszCurrentFolderPath[ lstrlen( lpszCurrentFolderPath ) - sizeof( char ) ] != ASCII_BACK_SLASH_CHARACTER )
+	if( lpszParentFolderPath2[ lstrlen( lpszParentFolderPath2 ) - sizeof( char ) ] != ASCII_BACK_SLASH_CHARACTER )
 	{
 		// Current folder path does not end with a back-slash
 
 		// Append back-slash onto current folder path
-		lstrcat( lpszCurrentFolderPath, ASCII_BACK_SLASH_STRING );
+		lstrcat( lpszParentFolderPath2, ASCII_BACK_SLASH_STRING );
 
 	} // End of current folder path does not end with a back-slash
 
 	// Copy current folder path into full search pattern
-	lstrcpy( lpszFullSearchPattern, lpszCurrentFolderPath );
+	lstrcpy( lpszFullSearchPattern, lpszParentFolderPath2 );
 
 	// Append all files filter onto full search pattern
 	lstrcat( lpszFullSearchPattern, ALL_FILES_FILTER );
@@ -229,6 +255,10 @@ int FileListViewWindow::Populate()
 		AutoSizeAllColumns();
 
 	} // End of successfully found first item
+
+	// Free string memory
+	delete [] lpszParentFolderPath2;
+	delete [] lpszFullSearchPattern;
 
 	return nResult;
 
