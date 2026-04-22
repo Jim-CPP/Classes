@@ -136,16 +136,99 @@ LRESULT FileListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, L
 
 int FileListViewWindow::Populate()
 {
-	int nResult = 0;
+	int nResult = -1;
 
-	// Delete all items from file list view window
-	DeleteAllItems();
+	WIN32_FIND_DATA wfd;
+	HANDLE hFindFile;
 
-	// Auto-size all file list view window columns
-	AutoSizeAllColumns();
+	// Allocate string memory
+	LPTSTR lpszCurrentFolderPath = new char[ STRING_LENGTH + sizeof( char ) ];
+	LPTSTR lpszFullSearchPattern = new char[ STRING_LENGTH + sizeof( char ) ];
 
-	// Update result
-	nResult = GetItemCount();
+	// Get current folder path
+	GetCurrentDirectory( STRING_LENGTH, lpszCurrentFolderPath );
+
+	// Ensure that current folder path ends with a back-slash
+	if( lpszCurrentFolderPath[ lstrlen( lpszCurrentFolderPath ) - sizeof( char ) ] != ASCII_BACK_SLASH_CHARACTER )
+	{
+		// Current folder path does not end with a back-slash
+
+		// Append back-slash onto current folder path
+		lstrcat( lpszCurrentFolderPath, ASCII_BACK_SLASH_STRING );
+
+	} // End of current folder path does not end with a back-slash
+
+	// Copy current folder path into full search pattern
+	lstrcpy( lpszFullSearchPattern, lpszCurrentFolderPath );
+
+	// Append all files filter onto full search pattern
+	lstrcat( lpszFullSearchPattern, ALL_FILES_FILTER );
+
+	// Find first item
+	hFindFile = FindFirstFile( lpszFullSearchPattern, &wfd );
+
+	// Ensure that first item was found
+	if( hFindFile != INVALID_HANDLE_VALUE )
+	{
+		// Successfully found first item
+
+		// Delete all items from file list view window
+		DeleteAllItems();
+
+		// Initialise return value
+		nResult = 0;
+
+		// Loop through all items
+		do
+		{
+			// See if found item is a folder
+			if( wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
+			{
+				// Found item is a folder
+
+				// Ensure that found item is not dots
+				if( wfd.cFileName[ 0 ] != ASCII_FULL_STOP_CHARACTER )
+				{
+					// Found item is not dots
+
+					// Add found item to list view window
+					if( AddItem( wfd.cFileName ) >= 0 )
+					{
+						// Successfully added item to list view window
+
+						// Update return value
+						nResult ++;
+
+					} // End of successfully added item to list view window
+
+				} // End of found item is not dots
+
+			} // End of found item is a folder
+			else
+			{
+				// Found item is a file
+
+				// Add found item to list view window
+				if( AddItem( wfd.cFileName ) >= 0 )
+				{
+					// Successfully added item to list view window
+
+					// Update return value
+					nResult ++;
+
+				} // End of successfully added item to list view window
+
+			} // End of found item is a file
+
+		} while( FindNextFile( hFindFile, &wfd ) != 0 ); // End of loop through all items
+
+		// Close find file handle
+		FindClose( hFindFile );
+
+		// Auto-size all file list view window columns
+		AutoSizeAllColumns();
+
+	} // End of successfully found first item
 
 	return nResult;
 
