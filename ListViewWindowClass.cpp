@@ -168,6 +168,20 @@ BOOL ListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszW
 
 } // End of function ListViewWindow::Create
 
+BOOL ListViewWindow::DeleteAllItems()
+{
+	// Delete all items from list view window
+	return ::SendMessage( m_hWnd, LVM_DELETEALLITEMS, ( WPARAM )NULL, ( LPARAM )NULL );
+
+} // End of function ListViewWindow::DeleteAllItems
+
+int ListViewWindow::GetItemCount()
+{
+	// Delete all items from list view window
+	return ::SendMessage( m_hWnd, LVM_GETITEMCOUNT, ( WPARAM )NULL, ( LPARAM )NULL );
+
+} // End of function ListViewWindow::GetItemCount
+
 BOOL ListViewWindow::GetItemText( int nWhichItem, int nWhichSubItem, LPTSTR lpszItemText, DWORD dwTextMax )
 {
 	BOOL bResult = FALSE;
