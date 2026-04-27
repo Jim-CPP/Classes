@@ -7,6 +7,7 @@
 #include "..\Common\Ascii.h"
 #include "..\Common\Common.h"
 
+#include "FileFindClass.h"
 #include "ListViewWindowClass.h"
 
 #define FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_TEXT								NULL

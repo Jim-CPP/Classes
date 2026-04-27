@@ -162,41 +162,15 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 {
 	int nResult = -1;
 
-	WIN32_FIND_DATA wfd;
-	HANDLE hFindFile;
-
-	// Allocate string memory
-	LPTSTR lpszParentFolderPath2 = new char[ STRING_LENGTH + sizeof( char ) ];
-	LPTSTR lpszFullSearchPattern = new char[ STRING_LENGTH + sizeof( char ) ];
-
-	// Copy parent folder path
-	lstrcpy( lpszParentFolderPath2, lpszParentFolderPath );
-	// Note that the parent folder path input parameter is a constant, which can't be modified
-	// Therefore a copy needs to be created
-
-	// Ensure that current folder path ends with a back-slash
-	if( lpszParentFolderPath2[ lstrlen( lpszParentFolderPath2 ) - sizeof( char ) ] != ASCII_BACK_SLASH_CHARACTER )
-	{
-		// Current folder path does not end with a back-slash
-
-		// Append back-slash onto current folder path
-		lstrcat( lpszParentFolderPath2, ASCII_BACK_SLASH_STRING );
-
-	} // End of current folder path does not end with a back-slash
-
-	// Copy current folder path into full search pattern
-	lstrcpy( lpszFullSearchPattern, lpszParentFolderPath2 );
-
-	// Append all files filter onto full search pattern
-	lstrcat( lpszFullSearchPattern, ALL_FILES_FILTER );
+	FileFind fileFind;
 
 	// Find first item
-	hFindFile = FindFirstFile( lpszFullSearchPattern, &wfd );
-
-	// Ensure that first item was found
-	if( hFindFile != INVALID_HANDLE_VALUE )
+	if( fileFind.First( lpszParentFolderPath, ALL_FILES_FILTER ) )
 	{
 		// Successfully found first item
+
+		// Allocate string memory
+		LPTSTR lpszFileName = new char[ STRING_LENGTH + sizeof( char ) ];
 
 		// Delete all items from file list view window
 		DeleteAllItems();
@@ -208,17 +182,20 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 		do
 		{
 			// See if found item is a folder
-			if( wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
+			if( fileFind.IsFolder() )
 			{
 				// Found item is a folder
 
 				// Ensure that found item is not dots
-				if( wfd.cFileName[ 0 ] != ASCII_FULL_STOP_CHARACTER )
+				if( !( fileFind.IsDots() ) )
 				{
 					// Found item is not dots
 
+					// Get found item name
+					fileFind.GetFileName( lpszFileName );
+
 					// Add found item to list view window
-					if( AddItem( wfd.cFileName ) >= 0 )
+					if( AddItem( lpszFileName ) >= 0 )
 					{
 						// Successfully added item to list view window
 
@@ -234,8 +211,11 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 			{
 				// Found item is a file
 
+				// Get found item name
+				fileFind.GetFileName( lpszFileName );
+
 				// Add found item to list view window
-				if( AddItem( wfd.cFileName ) >= 0 )
+				if( AddItem( lpszFileName ) >= 0 )
 				{
 					// Successfully added item to list view window
 
@@ -246,19 +226,18 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 
 			} // End of found item is a file
 
-		} while( FindNextFile( hFindFile, &wfd ) != 0 ); // End of loop through all items
+		} while( fileFind.Next() ); // End of loop through all items
 
 		// Close find file handle
-		FindClose( hFindFile );
+		fileFind.Close();
 
 		// Auto-size all file list view window columns
 		AutoSizeAllColumns();
 
-	} // End of successfully found first item
+		// Free string memory
+		delete [] lpszFileName;
 
-	// Free string memory
-	delete [] lpszParentFolderPath2;
-	delete [] lpszFullSearchPattern;
+	} // End of successfully found first item
 
 	return nResult;
 
