@@ -7,6 +7,8 @@
 #include "..\Common\Ascii.h"
 #include "..\Common\Common.h"
 
+#define FILE_FIND_CLASS_MODIFIED_TIME_FORMAT_STRING								"%04d/%02d/%02d %02d:%02d:%02d"
+
 class FileFind
 {
 public:
@@ -26,6 +28,8 @@ public:
 	BOOL First( LPCTSTR lpszParentFolderPath, LPCTSTR lpszFileFilter );
 
 	LPTSTR GetFileName( LPTSTR lpszFileName );
+
+	BOOL GetModifiedTime( LPTSTR lpszModifiedTime );
 
 	BOOL IsDots();
 

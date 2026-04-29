@@ -168,9 +168,11 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 	if( fileFind.First( lpszParentFolderPath, ALL_FILES_FILTER ) )
 	{
 		// Successfully found first item
+		int nItem;
 
 		// Allocate string memory
 		LPTSTR lpszFileName = new char[ STRING_LENGTH + sizeof( char ) ];
+		LPTSTR lpszModified = new char[ STRING_LENGTH + sizeof( char ) ];
 
 		// Delete all items from file list view window
 		DeleteAllItems();
@@ -195,7 +197,10 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 					fileFind.GetFileName( lpszFileName );
 
 					// Add found item to list view window
-					if( AddItem( lpszFileName ) >= 0 )
+					nItem = AddItem( lpszFileName );
+
+					// Ensure that found item was added to list view window
+					if( nItem >= 0 )
 					{
 						// Successfully added item to list view window
 
@@ -215,12 +220,25 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 				fileFind.GetFileName( lpszFileName );
 
 				// Add found item to list view window
-				if( AddItem( lpszFileName ) >= 0 )
+				nItem = AddItem( lpszFileName );
+
+				// Ensure that found item was added to list view window
+				if( nItem >= 0 )
 				{
 					// Successfully added item to list view window
 
-					// Update return value
-					nResult ++;
+					// Get modified time
+					if( fileFind.GetModifiedTime( lpszModified ) )
+					{
+						// Successfully got modified time
+
+						// Add modified time to list view window
+						SetItemText( nItem, FILE_LIST_VIEW_WINDOW_CLASS_MODIFIED_COLUMN_ID, lpszModified );
+
+						// Update return value
+						nResult ++;
+
+					} // End of successfully got modified time
 
 				} // End of successfully added item to list view window
 
@@ -236,6 +254,7 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 
 		// Free string memory
 		delete [] lpszFileName;
+		delete [] lpszModified;
 
 	} // End of successfully found first item
 

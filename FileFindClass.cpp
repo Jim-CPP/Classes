@@ -143,6 +143,29 @@ LPTSTR FileFind::GetFileName( LPTSTR lpszFileName )
 
 } // End of function FileFind::GetFileName
 
+BOOL FileFind::GetModifiedTime( LPTSTR lpszModifiedTime )
+{
+	BOOL bResult = FALSE;
+
+	SYSTEMTIME stModified;
+
+	// Convert modified file time to system time
+	if( FileTimeToSystemTime( ( &( m_wfd.ftLastWriteTime ) ), &stModified ) )
+	{
+		// Successfully converted modified file time to system time
+
+		// Format modified time
+		wsprintf( lpszModifiedTime, FILE_FIND_CLASS_MODIFIED_TIME_FORMAT_STRING, stModified.wYear, stModified.wMonth, stModified.wDay, stModified.wHour, stModified.wMinute, stModified.wSecond );
+
+		// Update return value
+		bResult = TRUE;
+
+	} // End of successfully converted modified file time to system time
+
+	return bResult;
+
+} // End of function FileFind::GetModifiedTime
+
 BOOL FileFind::IsDots()
 {
 	BOOL bResult = FALSE;
