@@ -22,6 +22,50 @@ FileListViewWindow::~FileListViewWindow()
 
 } // End of function FileListViewWindow::~FileListViewWindow
 
+int FileListViewWindow::AddItem( LPCTSTR lpszItemText, DWORD dwTextMax )
+{
+	int nResult = 0;
+
+	LVITEM lvItem;
+	int nItemCount;
+	SHFILEINFO shFileInfo;
+
+	// Allocate string memory
+	LPTSTR lpszItemPath = new char[ STRING_LENGTH + sizeof( char ) ];
+
+	// Copy parent folder path into file path
+	lstrcpy( lpszItemPath, m_lpszParentFolderPath );
+
+	// Append item text onto file path
+	lstrcat( lpszItemPath, lpszItemText );
+
+	// Get file information for item
+	SHGetFileInfo( lpszItemPath, 0, &shFileInfo, sizeof( shFileInfo ), ( SHGFI_ICON | SHGFI_SMALLICON ) );
+
+	// Count items on list view window
+	nItemCount = ::SendMessage( m_hWnd, LVM_GETITEMCOUNT, ( WPARAM )NULL, ( LPARAM )NULL );
+
+	// Clear list view item structure
+	ZeroMemory( &lvItem, sizeof( lvItem ) );
+
+	// Initialise list view item structure
+	lvItem.mask			= ( LVIF_TEXT | LVIF_IMAGE );
+	lvItem.cchTextMax	= dwTextMax;
+	lvItem.iItem		= nItemCount;
+	lvItem.iSubItem		= 0;
+	lvItem.pszText		= ( LPTSTR )lpszItemText;
+	lvItem.iImage		= shFileInfo.iIcon;
+
+	// Add item to list view window
+	nResult = ::SendMessage( m_hWnd, LVM_INSERTITEM, ( WPARAM )nItemCount, ( LPARAM )&lvItem );
+
+	// Free string memory
+	delete [] lpszItemPath;
+
+	return nResult;
+
+} // End of function FileListViewWindow::AddItem
+
 BOOL FileListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, HMENU hMenu, LPVOID lpParam )
 {
 	BOOL bResult = FALSE;
@@ -223,8 +267,8 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 		int nItem;
 
 		// Allocate string memory
-		LPTSTR lpszFileName = new char[ STRING_LENGTH + sizeof( char ) ];
-		LPTSTR lpszModified = new char[ STRING_LENGTH + sizeof( char ) ];
+		LPTSTR lpszFileName	= new char[ STRING_LENGTH + sizeof( char ) ];
+		LPTSTR lpszModified	= new char[ STRING_LENGTH + sizeof( char ) ];
 
 		// Delete all items from file list view window
 		DeleteAllItems();
@@ -313,6 +357,13 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 	return nResult;
 
 } // End of function FileListViewWindow::Populate
+
+HIMAGELIST FileListViewWindow::SetImageList( HIMAGELIST hImageList, int nWhichImageList )
+{
+	// Set image list
+	return ( HIMAGELIST )::SendMessage( m_hWnd, LVM_SETIMAGELIST, ( WPARAM )nWhichImageList, ( LPARAM )hImageList );
+
+} // End of function FileListViewWindow::SetImageList
 
 /*
 FileListViewWindow::

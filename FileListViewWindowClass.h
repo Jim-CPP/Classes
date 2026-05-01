@@ -39,6 +39,8 @@ public:
 	FileListViewWindow();
 	~FileListViewWindow();
 
+	int AddItem( LPCTSTR lpszItemText, DWORD dwTextMax = STRING_LENGTH );
+
 	BOOL Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_TEXT, DWORD dwExStyle = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE, DWORD dwStyle = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_STYLE, int nLeft = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_LEFT, int nTop = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_TOP, int nWidth = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_WIDTH, int nHeight = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_HEIGHT, HMENU hMenu = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_MENU, LPVOID lpParam = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_LP_PARAM );
 
 	BOOL GetItemPath( int nWhichItem, LPTSTR lpszItemPath, DWORD dwTextMax = STRING_LENGTH );
@@ -48,6 +50,8 @@ public:
 	int Populate();
 
 	int Populate( LPCTSTR lpszParentFolderPath );
+
+	HIMAGELIST SetImageList( HIMAGELIST hImageList, int nWhichImageList = LVSIL_SMALL );
 
 protected:
 	LPTSTR m_lpszParentFolderPath;
