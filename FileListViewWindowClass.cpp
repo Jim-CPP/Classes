@@ -4,10 +4,22 @@
 
 FileListViewWindow::FileListViewWindow()
 {
+	// Allocate string memory
+	m_lpszParentFolderPath = new char[ STRING_LENGTH + sizeof( char ) ];
+
+	// Clear parent folder path
+	m_lpszParentFolderPath [ 0 ] = ( char )NULL;
+
+	// Initialise global variables
+	m_nColumnCount = 0;
+
 } // End of function FileListViewWindow::FileListViewWindow
 
 FileListViewWindow::~FileListViewWindow()
 {
+	// Free string memory
+	delete [] m_lpszParentFolderPath;
+
 } // End of function FileListViewWindow::~FileListViewWindow
 
 BOOL FileListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, HMENU hMenu, LPVOID lpParam )
@@ -37,6 +49,46 @@ BOOL FileListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR l
 	return bResult;
 
 } // End of function FileListViewWindow::Create
+
+BOOL FileListViewWindow::GetItemPath( int nWhichItem, LPTSTR lpszItemPath, DWORD dwTextMax )
+{
+	BOOL bResult = FALSE;
+
+	LVITEM lvItem;
+
+	// Allocate string memory
+	LPTSTR lpszItemName = new char[ STRING_LENGTH + sizeof( char ) ];
+
+	// Clear list view item structure
+	ZeroMemory( &lvItem, sizeof( lvItem ) );
+
+	// Initialise list view item structure
+	lvItem.mask			= LVIF_TEXT;
+	lvItem.cchTextMax	= dwTextMax;
+	lvItem.iItem		= nWhichItem;
+	lvItem.iSubItem		= FILE_LIST_VIEW_WINDOW_CLASS_NAME_COLUMN_ID;
+	lvItem.pszText		= lpszItemName;
+
+	// Get item name from list view window
+	if( ::SendMessage( m_hWnd, LVM_GETITEM, ( WPARAM )nWhichItem, ( LPARAM )&lvItem ) )
+	{
+		// Successfully got item name from list view window
+
+		// Copy parent folder path into item path
+		lstrcpy( lpszItemPath, m_lpszParentFolderPath );
+
+		// Append item name onto item path
+		lstrcat( lpszItemPath, lpszItemName );
+
+		// Update return value
+		bResult = TRUE;
+
+	} // End of successfully got item name from list view window
+
+	// Free string memory
+	return bResult;
+
+} // End of function FileListViewWindow::GetItemPath
 
 LRESULT FileListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ), PFNLVCOMPARE pFnLvCompare )
 {
@@ -71,20 +123,20 @@ LRESULT FileListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, L
 				// Selection has changed to selected
 
 				// Allocate string memory
-				LPTSTR lpszItemText = new char[ STRING_LENGTH + sizeof( char ) ];
+				LPTSTR lpszItemPath = new char[ STRING_LENGTH + sizeof( char ) ];
 
-				// Get item text
-				if( GetItemText( lpNmListView->iItem, lpNmListView->iSubItem, lpszItemText ) )
+				// Get item path
+				if( GetItemPath( lpNmListView->iItem, lpszItemPath ) )
 				{
-					// Successfully got item text
+					// Successfully got item path
 
 					// Call selection changed function with item
-					( *lpSelectionChangeFunction )( lpszItemText );
+					( *lpSelectionChangeFunction )( lpszItemPath );
 
-				} // End of successfully got item text
+				} // End of successfully got item path
 
 				// Free string memory
-				delete [] lpszItemText;
+				delete [] lpszItemPath;
 
 			} // End of selection has changed to selected
 
@@ -97,20 +149,20 @@ LRESULT FileListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, L
 			// A double click notification code
 
 			// Allocate string memory
-			LPTSTR lpszItemText = new char[ STRING_LENGTH + sizeof( char ) ];
+			LPTSTR lpszItemPath = new char[ STRING_LENGTH + sizeof( char ) ];
 
-			// Get item text
-			if( GetItemText( lpNmListView->iItem, lpNmListView->iSubItem, lpszItemText ) )
+			// Get item path
+			if( GetItemPath( lpNmListView->iItem, lpszItemPath ) )
 			{
-				// Successfully got item text
+				// Successfully got item path
 
 				// Call double click function with item
-				( *lpDoubleClickFunction )( lpszItemText );
+				( *lpDoubleClickFunction )( lpszItemPath );
 
-			} // End of successfully got item text
+			} // End of successfully got item path
 
 			// Free string memory
-			delete [] lpszItemText;
+			delete [] lpszItemPath;
 
 			// Break out of switch
 			break;
@@ -247,7 +299,7 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 		} while( fileFind.Next() ); // End of loop through all items
 
 		// Close find file handle
-		fileFind.Close();
+		fileFind.Close( m_lpszParentFolderPath );
 
 		// Auto-size all file list view window columns
 		AutoSizeAllColumns();

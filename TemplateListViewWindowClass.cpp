@@ -4,6 +4,9 @@
 
 TemplateListViewWindow::TemplateListViewWindow()
 {
+	// Initialise global variables
+	m_nColumnCount = 0;
+
 } // End of function TemplateListViewWindow::TemplateListViewWindow
 
 TemplateListViewWindow::~TemplateListViewWindow()

@@ -198,7 +198,7 @@ BOOL ListViewWindow::GetItemText( int nWhichItem, int nWhichSubItem, LPTSTR lpsz
 	lvItem.iSubItem		= nWhichSubItem;
 	lvItem.pszText		= lpszItemText;
 
-	// Add item to list view window
+	// Get item text from list view window
 	bResult = ::SendMessage( m_hWnd, LVM_GETITEM, ( WPARAM )nWhichItem, ( LPARAM )&lvItem );
 
 	return bResult;

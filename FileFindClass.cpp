@@ -83,6 +83,20 @@ BOOL FileFind::Close()
 
 } // End of function FileFind::Close
 
+BOOL FileFind::Close( LPTSTR lpszParentFolderPath )
+{
+	BOOL bResult = FALSE;
+
+	// Store parent folder path
+	lstrcpy( lpszParentFolderPath, m_lpszParentFolderPath );
+
+	// Close file find
+	bResult = Close();
+
+	return bResult;
+
+} // End of function FileFind::Close
+
 BOOL FileFind::First( LPCTSTR lpszParentFolderPath, LPCTSTR lpszFileFilter )
 {
 	BOOL bResult = FALSE;
