@@ -22,7 +22,7 @@ FileListViewWindow::~FileListViewWindow()
 
 } // End of function FileListViewWindow::~FileListViewWindow
 
-int FileListViewWindow::AddItem( LPCTSTR lpszItemText, DWORD dwTextMax )
+int FileListViewWindow::AddItem( LPCTSTR lpszItemText, BOOL bIsFolder, DWORD dwTextMax )
 {
 	int nResult = 0;
 
@@ -53,11 +53,42 @@ int FileListViewWindow::AddItem( LPCTSTR lpszItemText, DWORD dwTextMax )
 	lvItem.cchTextMax	= dwTextMax;
 	lvItem.iItem		= nItemCount;
 	lvItem.iSubItem		= 0;
-	lvItem.pszText		= ( LPTSTR )lpszItemText;
 	lvItem.iImage		= shFileInfo.iIcon;
 
-	// Add item to list view window
-	nResult = ::SendMessage( m_hWnd, LVM_INSERTITEM, ( WPARAM )nItemCount, ( LPARAM )&lvItem );
+	// See if item is a folder
+	if( bIsFolder )
+	{
+		// Item is a folder
+
+		// Allocate string memory
+
+		// Allocate string memory
+		LPTSTR lpszFolderText = new char[ STRING_LENGTH + sizeof( char ) ];
+
+		// Format folder text
+		wsprintf( lpszFolderText, FILE_LIST_VIEW_WINDOW_CLASS_FOLDER_TEXT_FORMAT_STRING, FILE_LIST_VIEW_WINDOW_CLASS_FOLDER_TEXT_PREFIX, lpszItemText );
+
+		// Update list view item structure text
+		lvItem.pszText = ( LPTSTR )lpszFolderText;
+
+		// Add item to list view window
+		nResult = ::SendMessage( m_hWnd, LVM_INSERTITEM, ( WPARAM )nItemCount, ( LPARAM )&lvItem );
+
+		// Free string memory
+		delete [] lpszFolderText;
+
+	} // End of item is a folder
+	else
+	{
+		// Item is a file
+
+		// Update list view item structure text
+		lvItem.pszText = ( LPTSTR )lpszItemText;
+
+		// Add item to list view window
+		nResult = ::SendMessage( m_hWnd, LVM_INSERTITEM, ( WPARAM )nItemCount, ( LPARAM )&lvItem );
+
+	} // End of item is a file
 
 	// Free string memory
 	delete [] lpszItemPath;
@@ -121,8 +152,23 @@ BOOL FileListViewWindow::GetItemPath( int nWhichItem, LPTSTR lpszItemPath, DWORD
 		// Copy parent folder path into item path
 		lstrcpy( lpszItemPath, m_lpszParentFolderPath );
 
-		// Append item name onto item path
-		lstrcat( lpszItemPath, lpszItemName );
+		// See if item is a folder
+		if( lpszItemName[ 0 ] == FILE_LIST_VIEW_WINDOW_CLASS_FOLDER_TEXT_PREFIX )
+		{
+			// Item is a folder
+
+			// Append item name (after folder prefix) onto item path
+			lstrcat( lpszItemPath, ( lpszItemName + sizeof( FILE_LIST_VIEW_WINDOW_CLASS_FOLDER_TEXT_PREFIX ) ) );
+
+		} // End of item is a folder
+		else
+		{
+			// Item is a file
+
+			// Append item name onto item path
+			lstrcat( lpszItemPath, lpszItemName );
+
+		} // End of item is a file
 
 		// Update return value
 		bResult = TRUE;
@@ -293,7 +339,7 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 					fileFind.GetFileName( lpszFileName );
 
 					// Add found item to list view window
-					nItem = AddItem( lpszFileName );
+					nItem = AddItem( lpszFileName, TRUE );
 
 					// Ensure that found item was added to list view window
 					if( nItem >= 0 )
@@ -316,7 +362,7 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 				fileFind.GetFileName( lpszFileName );
 
 				// Add found item to list view window
-				nItem = AddItem( lpszFileName );
+				nItem = AddItem( lpszFileName, FALSE );
 
 				// Ensure that found item was added to list view window
 				if( nItem >= 0 )

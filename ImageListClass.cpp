@@ -74,7 +74,7 @@ BOOL ImageList::GetSystem()
 	SHFILEINFO shFileInfo;
 
 	// Get system image list
-	m_hImageList = ( HIMAGELIST )::SHGetFileInfo( "C:\\", 0, &shFileInfo, sizeof( shFileInfo ), ( SHGFI_SYSICONINDEX | SHGFI_SMALLICON ) );
+	m_hImageList = ( HIMAGELIST )::SHGetFileInfo( NULL, 0, &shFileInfo, sizeof( shFileInfo ), ( SHGFI_SYSICONINDEX | SHGFI_SMALLICON ) );
 
 	// Ensure that system image list was got
 	if( m_hImageList )
