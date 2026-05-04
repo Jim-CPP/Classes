@@ -23,7 +23,7 @@
 #define FILE_LIST_VIEW_WINDOW_CLASS_FOLDER_TEXT_FORMAT_STRING					"%c%s"
 #define FILE_LIST_VIEW_WINDOW_CLASS_FOLDER_TEXT_PREFIX							ASCII_SPACE_CHARACTER
 
-#define FILE_LIST_VIEW_WINDOW_CLASS_POPULATE_STATUS_MESSAGE_FORMAT_STRING		"%d items"
+#define FILE_LIST_VIEW_WINDOW_CLASS_POPULATE_STATUS_MESSAGE_FORMAT_STRING		"%s (%d items)"
 
 #define FILE_LIST_VIEW_WINDOW_CLASS_COLUMN_TITLES								{ "Name", "Modified" }
 
@@ -48,7 +48,7 @@ public:
 
 	BOOL GetItemPath( int nWhichItem, LPTSTR lpszItemPath, DWORD dwTextMax = STRING_LENGTH );
 
-	LRESULT HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ), PFNLVCOMPARE pFnLvCompare );
+	LRESULT HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpStatusFunction )( LPCTSTR lpszStatusMessage ), PFNLVCOMPARE pFnLvCompare );
 
 	int Populate();
 

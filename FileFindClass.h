@@ -25,11 +25,11 @@ public:
 
 	BOOL Close();
 
-	BOOL Close( LPTSTR lpszParentFolderPath );
-
 	BOOL First( LPCTSTR lpszParentFolderPath, LPCTSTR lpszFileFilter );
 
 	LPTSTR GetFileName( LPTSTR lpszFileName );
+
+	LPTSTR GetParentFolderPath( LPTSTR lpszParentFolderPath );
 
 	BOOL GetModifiedTime( LPTSTR lpszModifiedTime );
 

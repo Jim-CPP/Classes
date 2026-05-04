@@ -180,7 +180,7 @@ BOOL FileListViewWindow::GetItemPath( int nWhichItem, LPTSTR lpszItemPath, DWORD
 
 } // End of function FileListViewWindow::GetItemPath
 
-LRESULT FileListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpSelectionChangeFunction )( LPCTSTR lpszItemText ), BOOL( *lpDoubleClickFunction )( LPCTSTR lpszItemText ), PFNLVCOMPARE pFnLvCompare )
+LRESULT FileListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, LPARAM lParam, BOOL( *lpStatusFunction )( LPCTSTR lpszStatusMessage ), PFNLVCOMPARE pFnLvCompare )
 {
 	LRESULT lResult = 0;
 
@@ -220,8 +220,8 @@ LRESULT FileListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, L
 				{
 					// Successfully got item path
 
-					// Call selection changed function with item
-					( *lpSelectionChangeFunction )( lpszItemPath );
+					// Call status function with item
+					( *lpStatusFunction )( lpszItemPath );
 
 				} // End of successfully got item path
 
@@ -245,9 +245,51 @@ LRESULT FileListViewWindow::HandleNotifyMessage( HWND hWndMain, WPARAM wParam, L
 			if( GetItemPath( lpNmListView->iItem, lpszItemPath ) )
 			{
 				// Successfully got item path
+				FileFind fileFind;
 
-				// Call double click function with item
-				( *lpDoubleClickFunction )( lpszItemPath );
+				// Allocate string memory
+				LPTSTR lpszStatusMessage = new char[ STRING_LENGTH + sizeof( char ) ];
+
+				// Attempt to find first item
+				if( fileFind.First( lpszItemPath, ALL_FILES_FILTER ) )
+				{
+					// Successfully found first item - item is a folder
+					int nItemCount;
+
+					// Close file find
+					fileFind.Close();
+
+					// Populate to item
+					nItemCount = Populate( lpszItemPath );
+
+					// Format status message
+					wsprintf( lpszStatusMessage, FILE_LIST_VIEW_WINDOW_CLASS_POPULATE_STATUS_MESSAGE_FORMAT_STRING, lpszItemPath, nItemCount );
+
+					// Call status function with item
+					( *lpStatusFunction )( lpszStatusMessage );
+
+				} // End of successfully found first item - item is a folder
+				else
+				{
+					// Unable to find first item - item is a file
+
+					// Open file
+					if( ( INT_PTR )ShellExecute( NULL, SHELL_EXECUTE_OPEN_COMMAND, lpszItemPath, NULL, NULL, SW_SHOWDEFAULT ) <= SHELL_EXECUTE_MAXIMUM_FAILURE_RETURN_VALUE )
+					{
+						// Unable to open file
+
+						// Format status message
+						wsprintf( lpszStatusMessage, UNABLE_TO_OPEN_FILE_ERROR_MESSAGE_FORMAT_STRING, lpszItemPath );
+
+						// Display status message
+						::MessageBox( hWndMain, lpszStatusMessage, ERROR_MESSAGE_CAPTION, ( MB_OK | MB_ICONERROR ) );
+
+					} // End of unable to open file
+
+				} // End of unable to find first item - item is a file
+
+				// Free string memory
+				delete [] lpszStatusMessage;
 
 			} // End of successfully got item path
 
@@ -322,6 +364,9 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 		// Initialise return value
 		nResult = 0;
 
+		// Update member parent folder path
+		fileFind.GetParentFolderPath( m_lpszParentFolderPath );
+
 		// Loop through all items
 		do
 		{
@@ -389,7 +434,7 @@ int FileListViewWindow::Populate( LPCTSTR lpszParentFolderPath )
 		} while( fileFind.Next() ); // End of loop through all items
 
 		// Close find file handle
-		fileFind.Close( m_lpszParentFolderPath );
+		fileFind.Close();
 
 		// Auto-size all file list view window columns
 		AutoSizeAllColumns();
